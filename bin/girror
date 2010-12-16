@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+#
+# Author:: Pavel Argentov <argentoff@gmail.com>
+# 
+# Mirror the remote sftp site and store the changes in a local git repo.
+
+$:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
+
+help = <<HELP
+Mirror the remote sftp site and store the changes in a local git repo.
+
+Command Line Usage:
+  
+  girror [options] remote_uri local_dir
+
+  remote_uri: a complete "sftp://" uri of a remote location;
+  local_dir:  a local path where the mirror root should appear.
+
+  The mirror a.k.a localdir should be a previously created workdir 
+  of a git repo. The program will exit with an error if this requirement
+  isn't met.
+
+  Options:
+HELP
+
+require 'optparse'
+require 'girror'
+
+options = {}
+opts = OptionParser.new do |opts|
+  opts.banner = help
+
+  opts.on("-dr", "Dry run: only logs what's to be done") do |addr|
+    options[:dr] = true
+  end
+  opts.on("-h", "Display help") do
+    puts opts.help
+    exit 1
+  end
+end
+
+# Read command line options into `options` hash
+opts.parse!
+
+case ARGV.size
+when 2
+  options[:from], options[:to] = ARGV[0], ARGV[1]
+else
+  puts "Incorrect arguments; use -h to see help."
+  exit 1
+end
+
+puts Girror.run options
