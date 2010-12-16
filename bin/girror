@@ -6,25 +6,31 @@
 
 $:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
 
+require 'optparse'
+require 'girror'
+
 help = <<HELP
-Mirror the remote sftp site and store the changes in a local git repo.
+Girror cli tool, version #{Girror::VERSION}.
+
+Mirrors the remote sftp site and stores the changes in a local git repo.
 
 Command Line Usage:
   
   girror [options] remote_uri local_dir
 
-  remote_uri: a complete "sftp://" uri of a remote location;
+  remote_uri: a complete sftp uri of a remote location;
   local_dir:  a local path where the mirror root should appear.
 
-  The mirror a.k.a localdir should be a previously created workdir 
+  remote_uri may be in the form of either "user:pass@host:path" or
+  "host:path". In the latter case username is taken from the environment
+  variable $USERNAME.
+
+  The mirror a.k.a local_dir should be a previously created workdir 
   of a git repo. The program will exit with an error if this requirement
   isn't met.
 
   Options:
 HELP
-
-require 'optparse'
-require 'girror'
 
 options = {}
 opts = OptionParser.new do |opts|
@@ -33,6 +39,11 @@ opts = OptionParser.new do |opts|
   opts.on("-dr", "Dry run: only logs what's to be done") do |addr|
     options[:dr] = true
   end
+
+  opts.on("-v", "Be verbose: display a lot of debugging stuff on stderr") do |addr|
+    options[:verbose] = true
+  end
+
   opts.on("-h", "Display help") do
     puts opts.help
     exit 1
@@ -50,4 +61,4 @@ else
   exit 1
 end
 
-puts Girror.run options
+Girror::run options
