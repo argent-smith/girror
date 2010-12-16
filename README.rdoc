@@ -1,6 +1,22 @@
 = girror
 
-Description goes here.
+girror == [G]it the M[irror]
+
+A tool which I couldn't google up, so decided to make it myself.
+
+What should it do once complete?
+
+1. Log into the remote sftp server;
+2. Get the directory tree from there;
+3. Compare the tree to the local one;
+4. Download all the newer files;
+5. Remove all the removed-on-remote files;
+6. Wrap all the operations into git transactions (creation/deletion 
+   of files/dirs)
+7. Git commit
+
+The gotcha is that I don't have any special server software on the remote side
+besides the ssh/sftp.
 
 == Contributing to girror
  
