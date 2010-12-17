@@ -2,6 +2,7 @@ GEM
   remote: http://rubygems.org/
   specs:
     git (1.2.5)
+    highline (1.6.1)
     jeweler (1.5.1)
       bundler (~> 1.0.0)
       git (>= 1.2.5)
@@ -19,6 +20,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.0.0)
   git
+  highline
   jeweler (~> 1.5.1)
   net-sftp
   rcov

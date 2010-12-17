@@ -14,3 +14,4 @@ end
 
 gem "net-sftp"
 gem "git"
+gem "highline"
