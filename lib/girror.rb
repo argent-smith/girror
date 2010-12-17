@@ -91,7 +91,7 @@ module Girror
             n = File.join name, e.name
             dl_if_needed n unless ((e.name =~ /^\.{1,2}$/) or (n == File.join(@path, ".git")))
           end
-        else                           # here's a file
+        else                           # here's a file OR SYMLINK (!)
           lfile = File.join '.', name.gsub(/^#{@path}/,''); debug "LFI: #{lfile}"
           debug "FIL: #{name}"
           if File.exists? lfile
