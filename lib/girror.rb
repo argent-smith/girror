@@ -58,11 +58,11 @@ module Girror
           debug "Remote data specified as: login: #{@user}; pass: #{@pass.inspect}; host: #{@host}; path: #{@path}"
           Net::SFTP.start(@host, @user, :password => @pass) do |s|
             @sftp = s
-            debug "Opened sftp session #{@sftp}"
+            log "Connected to remote #{@host} as #{@user}"
 
             dl_if_needed @path
 
-            debug "Closing sftp session #{@sftp}"
+            log "Disconnected from remote #{@host}"
           end
      
         else
@@ -82,22 +82,34 @@ module Girror
       end
 
       def dl_if_needed name
+        debug "RNA: #{name}"
+        lname = File.join '.', name.gsub(/^#{@path}/,''); debug "LNA: #{lname}"
+        rs = @sftp.lstat!(name); s_rs = [Time.at(rs.mtime), Time.at(rs.atime), rs.uid, rs.gid, "%o" % rs.permissions].inspect
+        debug "Remote stat for #{name} => #{s_rs}"
         if @sftp.file.directory? name  # here we've got a dir
           debug "DIR: #{name}"
-          # create/adjust the dir locally if needed
-          # - get remote owner & mode
-          # - mkdir/chown/chmod as needed
+          # create the dir locally if needed
+          unless File.exist?(lname)
+            log "Getting #{name} -> #{lname} | #{s_rs}" 
+            mkdir lname, :mode => rs.permissions
+            setstat_pending = true
+          end
+          # recurse into the dir
           @sftp.dir.foreach name do |e|
             n = File.join name, e.name
             dl_if_needed n unless ((e.name =~ /^\.{1,2}$/) or (n == File.join(@path, ".git")))
           end
+          # adjust dir's stats afterwards
+          unless lname == "./"
+            chown rs.uid, rs.gid, lname
+            File.utime rs.atime, rs.mtime, lname
+          end
         else                           # here's a file OR SYMLINK (!)
-          lfile = File.join '.', name.gsub(/^#{@path}/,''); debug "LFI: #{lfile}"
           debug "FIL: #{name}"
-          if File.exists? lfile
+          if File.exists? lname
             debug "File exists in local tree: skipping"
           else
-            debug "Downloading #{name} -> #{lfile}"
+            debug "Downloading #{name} -> #{lname}"
             #@sftp.download! name, lfile, :progress => CustomHandler.new(self)
           end
         end
