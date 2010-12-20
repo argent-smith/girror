@@ -109,19 +109,19 @@ module Girror
         # do the type-specific fetch operations
         case rs.type
         when 1
-          debug "FIL: #{name}"
           lrs = File.lstat(lname) if File.exist?(lname)
           if (lrs.nil? or (lrs.mtime.to_i < rs.mtime))
             log "Downloading #{name} -> #{lname}"
             @sftp.download! name, lname
+            set_attrs = true
           end
         when 2
           # here we've got a dir
-          debug "DIR: #{name}"
           # create the dir locally if needed
           unless File.exist?(lname)
             log "Getting #{name} -> #{lname} | #{s_rs}"
             mkdir lname
+            set_attrs = true
           end
           # recurse into the dir
           @sftp.dir.foreach name do |e|
@@ -129,12 +129,10 @@ module Girror
             dl_if_needed n unless ((e.name =~ /^\.{1,2}$/) or (n == File.join(@path, ".git")))
           end
         when 3
-          # fetch a symlink
-          lirs = @sftp.readlink!(name)
-          log "Setting symlink: #{lname} -> #{lirs.name}"
-          ln_s lirs.name, lname
-          File.lchown rs.uid, rs.gid, lname
-          File.lchmod rs.permissions, lname
+          # symlink should be dealt as a usual regular file/dir (for security and
+          # compatibility reasons)
+          ldest = @sftp.readlink!(name)
+          debug "LIN: #{name} -> #{ldest}"
         end
         
         # do the common after-fetch tasks (chown, chmod, utime)
@@ -142,7 +140,7 @@ module Girror
           chown rs.uid, rs.gid, lname
           chmod rs.permissions, lname
           File.utime rs.atime, rs.mtime, lname
-        end
+        end if set_attrs
       end
     end
   end
