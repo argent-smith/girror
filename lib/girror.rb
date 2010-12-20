@@ -96,52 +96,52 @@ module Girror
         # remove the local entry if local/remote entry type differ
         if File.exist? lname
           if (
-            rs.type != case File.ftype lname
-            when "file"      then 1
-            when "directory" then 2
-            when "link"      then 3
-            end
-          )
-          remove_entry_secure lname, :force => true
+              rs.type != case File.ftype lname
+              when "file"      then 1
+              when "directory" then 2
+              when "link"      then 3
+              end
+            )
+            remove_entry_secure lname, :force => true
           end
         end
 
-        if @sftp.file.directory? name  # here we've got a dir
+        # do the type-specific fetch operations
+        case rs.type
+        when 1
+          debug "FIL: #{name}"
+          lrs = File.lstat(lname) if File.exist?(lname)
+          if (lrs.nil? or (lrs.mtime.to_i < rs.mtime))
+            log "Downloading #{name} -> #{lname}"
+            @sftp.download! name, lname
+          end
+        when 2
+          # here we've got a dir
           debug "DIR: #{name}"
           # create the dir locally if needed
           unless File.exist?(lname)
-            log "Getting #{name} -> #{lname} | #{s_rs}" 
-            mkdir lname, :mode => rs.permissions
-            setstat_pending = true
+            log "Getting #{name} -> #{lname} | #{s_rs}"
+            mkdir lname
           end
           # recurse into the dir
           @sftp.dir.foreach name do |e|
             n = File.join name, e.name
             dl_if_needed n unless ((e.name =~ /^\.{1,2}$/) or (n == File.join(@path, ".git")))
           end
-          # adjust dir's stats afterwards
-          unless lname == "./"
-            chown rs.uid, rs.gid, lname
-            File.utime rs.atime, rs.mtime, lname
-          end
-        else                           # here's a file OR SYMLINK (!)
-          debug "FIL: #{name}"
-          lrs = File.lstat(lname) if File.exist?(lname)
-          if (lrs.nil? or (lrs.mtime.to_i < rs.mtime))
-            log "Downloading #{name} -> #{lname}"
-            if rs.symlink?
-              lirs = @sftp.readlink!(name)
-              log "Setting symlink: #{lname} -> #{lirs.name}"
-              ln_s lirs.name, lname
-              File.lchown rs.uid, rs.gid, lname
-              File.lchmod rs.permissions, lname
-            else
-              @sftp.download! name, lname
-              chown rs.uid, rs.gid, lname
-              chmod rs.permissions, lname
-              File.utime rs.atime, rs.mtime, lname
-            end
-          end
+        when 3
+          # fetch a symlink
+          lirs = @sftp.readlink!(name)
+          log "Setting symlink: #{lname} -> #{lirs.name}"
+          ln_s lirs.name, lname
+          File.lchown rs.uid, rs.gid, lname
+          File.lchmod rs.permissions, lname
+        end
+        
+        # do the common after-fetch tasks (chown, chmod, utime)
+        unless lname == "./"
+          chown rs.uid, rs.gid, lname
+          chmod rs.permissions, lname
+          File.utime rs.atime, rs.mtime, lname
         end
       end
     end
