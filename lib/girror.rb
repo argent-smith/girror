@@ -84,7 +84,9 @@ module Girror
       def dl_if_needed name
         debug "RNA: #{name}"
         lname = File.join '.', name.gsub(/^#{@path}/,''); debug "LNA: #{lname}"
-        rs = @sftp.lstat!(name); s_rs = [Time.at(rs.mtime), Time.at(rs.atime), rs.uid, rs.gid, "%o" % rs.permissions].inspect
+        
+        # get and hold the current direntry's stat in here
+        rs  = @sftp.lstat!(name); s_rs = [Time.at(rs.mtime), Time.at(rs.atime), rs.uid, rs.gid, "%o" % rs.permissions].inspect
         debug "Remote stat for #{name} => #{s_rs}"
         if @sftp.file.directory? name  # here we've got a dir
           debug "DIR: #{name}"
@@ -106,46 +108,24 @@ module Girror
           end
         else                           # here's a file OR SYMLINK (!)
           debug "FIL: #{name}"
-          if File.exists? lname
-            debug "File exists in local tree: skipping"
-          else
-            debug "Downloading #{name} -> #{lname}"
-            #@sftp.download! name, lfile, :progress => CustomHandler.new(self)
+          lrs = File.lstat(lname) if File.exist?(lname)
+          if (lrs.nil? or (lrs.mtime.to_i < rs.mtime))
+            log "Downloading #{name} -> #{lname}"
+            if rs.symlink?
+              lirs = @sftp.readlink!(name)
+              log "Setting symlink: #{lname} -> #{lirs.name}"
+              ln_s lirs.name, lname
+              File.lchown rs.uid, rs.gid, lname
+              File.lchmod rs.permissions, lname
+            else
+              @sftp.download! name, lname
+              chown rs.uid, rs.gid, lname
+              chmod rs.permissions, lname
+              File.utime rs.atime, rs.mtime, lname
+            end
           end
         end
       end
     end
   end
-
-  # Displays the download progress.
-  class CustomHandler
-
-    # Initialises the CustomHandler. Takes 'app' parameter which holds the
-    # Application where 'log' method should be found. For further reference see
-    # docs of 'dl_if_needed' method.
-    def initialize app
-      @app = app
-    end
-
-    def on_open(downloader, file)
-      @app.log "starting download: #{file.remote} -> #{file.local} (#{file.size} bytes)"
-    end
-
-    def on_get(downloader, file, offset, data)
-      @app.log "writing #{data.length} bytes to #{file.local} starting at #{offset}"
-    end
-
-    def on_close(downloader, file)
-      @app.log "finished with #{file.remote}"
-    end
-
-    def on_mkdir(downloader, path)
-      @app.log "creating directory #{path}"
-    end
-
-    def on_finish(downloader)
-      @app.log "all done!"
-    end
-  end
-
 end
