@@ -81,13 +81,31 @@ module Girror
         @log.info string
       end
 
+      # On-demand fetcher
       def dl_if_needed name
         debug "RNA: #{name}"
         lname = File.join '.', name.gsub(/^#{@path}/,''); debug "LNA: #{lname}"
-        
+
         # get and hold the current direntry's stat in here
         rs  = @sftp.lstat!(name); s_rs = [Time.at(rs.mtime), Time.at(rs.atime), rs.uid, rs.gid, "%o" % rs.permissions].inspect
         debug "Remote stat for #{name} => #{s_rs}"
+
+        # remote type filter: we only work with types 1..3 (regular, dir, link)
+        raise "Remote file type #{rs.type} isn't supported, sorry." if rs.type > 3
+
+        # remove the local entry if local/remote entry type differ
+        if File.exist? lname
+          if (
+            rs.type != case File.ftype lname
+            when "file"      then 1
+            when "directory" then 2
+            when "link"      then 3
+            end
+          )
+          remove_entry_secure lname, :force => true
+          end
+        end
+
         if @sftp.file.directory? name  # here we've got a dir
           debug "DIR: #{name}"
           # create the dir locally if needed
