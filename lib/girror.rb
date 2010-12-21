@@ -90,8 +90,11 @@ module Girror
         rs  = @sftp.stat!(name); s_rs = [Time.at(rs.mtime), Time.at(rs.atime), rs.uid, rs.gid, "%o" % rs.permissions].inspect
         debug "Remote stat for #{name} => #{s_rs}"
 
-        # remote type filter: we only work with types 1..3 (regular, dir, link)
-        raise "Remote file type #{rs.type} isn't supported, sorry." if rs.type > 2
+        # remote type filter: we only work with types 1..2 (regular, dir)
+        begin
+          debug "Remote file type #{rs.type} isn't supported, ignoring."
+          return
+        end if rs.type > 2
 
         # remove the local entry if local/remote entry type differ
         if File.exist? lname
