@@ -127,7 +127,7 @@ module Girror
           # here we've got a dir
           # create the dir locally if needed
           unless File.exist?(lname)
-            log "Getting #{name} -> #{lname} | #{s_rs}"
+            log "Getting #{name} -> #{lname.force_encoding("BINARY")} | #{s_rs}"
             mkdir lname
             set_attrs = true
           end
@@ -140,6 +140,7 @@ module Girror
         
         # do the common after-fetch tasks (chown, chmod, utime)
         unless lname == "./"
+          debug "SATT: #{lname}"
           chown rs.uid, rs.gid, lname
           chmod rs.permissions, lname
           File.utime rs.atime, rs.mtime, lname
