@@ -140,9 +140,9 @@ module Girror
         
         # do the common after-fetch tasks (chown, chmod, utime)
         unless lname == "./"
-          chown rs.uid, rs.gid, lname
+          File.chown rs.uid, rs.gid, lname
           debug "chown done"
-          chmod rs.permissions, lname.encode(@lenc)
+          File.chmod rs.permissions, lname
           debug "chmod done"
           File.utime rs.atime, rs.mtime, lname
           debug "utime done"
