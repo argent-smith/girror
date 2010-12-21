@@ -87,11 +87,11 @@ module Girror
         lname = File.join '.', name.gsub(/^#{@path}/,''); debug "LNA: #{lname}"
 
         # get and hold the current direntry's stat in here
-        rs  = @sftp.lstat!(name); s_rs = [Time.at(rs.mtime), Time.at(rs.atime), rs.uid, rs.gid, "%o" % rs.permissions].inspect
+        rs  = @sftp.stat!(name); s_rs = [Time.at(rs.mtime), Time.at(rs.atime), rs.uid, rs.gid, "%o" % rs.permissions].inspect
         debug "Remote stat for #{name} => #{s_rs}"
 
         # remote type filter: we only work with types 1..3 (regular, dir, link)
-        raise "Remote file type #{rs.type} isn't supported, sorry." if rs.type > 3
+        raise "Remote file type #{rs.type} isn't supported, sorry." if rs.type > 2
 
         # remove the local entry if local/remote entry type differ
         if File.exist? lname
@@ -99,7 +99,6 @@ module Girror
               rs.type != case File.ftype lname
               when "file"      then 1
               when "directory" then 2
-              when "link"      then 3
               end
             )
             remove_entry_secure lname, :force => true
@@ -128,11 +127,6 @@ module Girror
             n = File.join name, e.name
             dl_if_needed n unless ((e.name =~ /^\.{1,2}$/) or (n == File.join(@path, ".git")))
           end
-        when 3
-          # symlink should be dealt as a usual regular file/dir (for security and
-          # compatibility reasons)
-          ldest = @sftp.readlink!(name)
-          debug "LIN: #{name} -> #{ldest}"
         end
         
         # do the common after-fetch tasks (chown, chmod, utime)
