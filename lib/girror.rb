@@ -140,12 +140,11 @@ module Girror
         
         # do the common after-fetch tasks (chown, chmod, utime)
         unless lname == "./"
-          File.chown rs.uid, rs.gid, lname
-          debug "chown done"
-          #File.chmod rs.permissions, lname
-          debug "chmod done"
+          unless ENV['OS'] == "Windows_NT"     # chmod/chown issues on that platform
+            File.chown rs.uid, rs.gid, lname
+            File.chmod rs.permissions, lname
+          end
           File.utime rs.atime, rs.mtime, lname
-          debug "utime done"
         end if set_attrs
       end
 
