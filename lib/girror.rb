@@ -2,6 +2,7 @@
 #
 # Girror library code.
 #
+#
 
 ######## Utility
 
@@ -118,7 +119,7 @@ module Girror
         when 1
           lrs = File.lstat(lname) if File.exist?(lname)
           if (lrs.nil? or (lrs.mtime.to_i < rs.mtime))
-            log "Downloading #{name} -> #{lname}"
+            log "Downloading #{name} -> #{lname.force_encoding("BINARY")}"
             @sftp.download! name, lname
             set_attrs = true
           end
