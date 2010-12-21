@@ -134,7 +134,7 @@ module Girror
           # recurse into the dir
           @sftp.dir.foreach name do |e|
             n = File.join name, e.name
-            dl_if_needed n unless ((e.name =~ /^\.{1,2}$/) or (n == File.join(@path, ".git")))
+            dl_if_needed n unless e.name =~ /^\.((\.{0,1})|(git)(ignore)?)$/
           end
         end
         
