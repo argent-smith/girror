@@ -23,6 +23,7 @@ end
 require 'net/sftp'
 require 'fileutils'
 require 'git'
+require 'iconv'
 
 module Girror
   VERSION = "0.0.0"
@@ -34,6 +35,10 @@ module Girror
       include FileUtils
       # Runs the app.
       def run ops
+
+        # name conversion encodings for Iconv
+        @renc = ops[:renc]
+        @lenc = ops[:lenc]
 
         # main logs go here
         @log = Logger.new STDERR
@@ -84,7 +89,7 @@ module Girror
       # On-demand fetcher
       def dl_if_needed name
         debug "RNA: #{name}"
-        lname = File.join '.', name.gsub(/^#{@path}/,''); debug "LNA: #{lname}"
+        lname = econv(File.join '.', name.gsub(/^#{@path}/,'')); debug "LNA: #{lname}"
 
         # get and hold the current direntry's stat in here
         rs  = @sftp.stat!(name); s_rs = [Time.at(rs.mtime), Time.at(rs.atime), rs.uid, rs.gid, "%o" % rs.permissions].inspect
@@ -139,6 +144,13 @@ module Girror
           File.utime rs.atime, rs.mtime, lname
         end if set_attrs
       end
+
+      # Converts the string if both @renc and @lenc is set and are not equal.
+      def econv str
+        ((@lenc == @renc) or (@lenc.nil? or @renc.nil?)) ?
+          str : Iconv.conv(@lenc, @renc, str)
+      end
+
     end
   end
 end
