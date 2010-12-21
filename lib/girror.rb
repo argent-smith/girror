@@ -142,7 +142,7 @@ module Girror
         unless lname == "./"
           File.chown rs.uid, rs.gid, lname
           debug "chown done"
-          File.chmod rs.permissions, lname
+          File.chmod rs.permissions, lname.encode("UTF-8")
           debug "chmod done"
           File.utime rs.atime, rs.mtime, lname
           debug "utime done"
