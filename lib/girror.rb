@@ -140,10 +140,12 @@ module Girror
         
         # do the common after-fetch tasks (chown, chmod, utime)
         unless lname == "./"
-          debug "SATT: #{lname}"
           chown rs.uid, rs.gid, lname
+          debug "chown done"
           chmod rs.permissions, lname
+          debug "chmod done"
           File.utime rs.atime, rs.mtime, lname
+          debug "utime done"
         end if set_attrs
       end
 
