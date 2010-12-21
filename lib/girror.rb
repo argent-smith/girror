@@ -142,7 +142,7 @@ module Girror
         unless lname == "./"
           chown rs.uid, rs.gid, lname
           debug "chown done"
-          chmod rs.permissions, lname.force_encoding("BINARY")
+          chmod rs.permissions, lname.encode(@lenc)
           debug "chmod done"
           File.utime rs.atime, rs.mtime, lname
           debug "utime done"
