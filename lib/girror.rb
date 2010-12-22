@@ -102,7 +102,8 @@ module Girror
           return
         end if rs.type > 2
 
-        # remove the local entry if local/remote entry type differ
+        # remove the local entry if local/remote entry type differ;
+        # else compare remote/local owner/mode and schedule the update.
         if File.exist? lname
           if (
               rs.type != case File.ftype lname
@@ -111,13 +112,20 @@ module Girror
               end
             )
             remove_entry_secure lname, :force => true
+          else
+            lrs = File.stat(lname)
+            # we do mode/owner comparison on Unices only!
+            unless ENV['OS'] == "Windows_NT"
+              set_attrs = true unless (
+                [lrs.mode, lrs.uid, lrs.gid] == [rs.permissions, rs.uid, rs.gid]
+              )
+            end
           end
         end
 
         # do the type-specific fetch operations
         case rs.type
         when 1
-          lrs = File.lstat(lname) if File.exist?(lname)
           if (lrs.nil? or (lrs.mtime.to_i < rs.mtime))
             log "Downloading #{name} -> #{lname.force_encoding("BINARY")}"
             @sftp.download! name, lname
