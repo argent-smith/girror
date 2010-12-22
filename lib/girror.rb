@@ -50,8 +50,9 @@ module Girror
         debug "Current options are: #{ops.inspect}"
 
         # check the validity of a local directory
-        @lpath = ops[:to]                                   # local save path
+        @lpath = ops[:to]       # local save path
         @git = Git.open(@lpath) # local git repo
+        
         cd ops[:to]; log "Changed to #{pwd}"
 
         # Check the validity of a remote url and run the remote connection
