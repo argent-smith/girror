@@ -51,7 +51,7 @@ module Girror
 
         # check the validity of a local directory
         @lpath = ops[:to]                                   # local save path
-        @git = Git.open(@lpath, :log => Logger.new(STDERR)) # local git repo
+        @git = Git.open(@lpath) # local git repo
         cd ops[:to]; log "Changed to #{pwd}"
 
         # Check the validity of a remote url and run the remote connection
@@ -69,6 +69,15 @@ module Girror
             dl_if_needed @path
 
             log "Disconnected from remote #{@host}"
+            
+            # fix the local tree in the git repo
+            begin
+              @git.add
+              @git.commit Time.now.to_s, :add_all => true
+            rescue Git::GitExecuteError => detail
+              log detail.message.gsub(/\n/,' ')
+            end
+            
           end
      
         else
