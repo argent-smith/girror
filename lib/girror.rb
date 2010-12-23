@@ -27,7 +27,7 @@ require 'git'
 require 'iconv'
 
 module Girror
-  VERSION = "0.0.0"
+  # VERSION = "0.0.0"
 
   # Encapsulates the app logic.
   class Application
@@ -51,6 +51,7 @@ module Girror
 
         # check the validity of a local directory
         @lpath = ops[:to]       # local save path
+        log "Opening local git repo at #{@lpath}"
         @git = Git.open(@lpath) # local git repo
         
         cd ops[:to]; log "Changed to #{pwd}"
@@ -73,6 +74,7 @@ module Girror
             
             # fix the local tree in the git repo
             begin
+              log "Committing changes to local git repo"
               @git.add
               @git.commit Time.now.to_s, :add_all => true
             rescue Git::GitExecuteError => detail
@@ -103,7 +105,11 @@ module Girror
         lname = econv(File.join '.', name.gsub(/^#{@path}/,'')); debug "LNA: #{lname}"
 
         # get and hold the current direntry's stat in here
-        rs  = @sftp.stat!(name); s_rs = [Time.at(rs.mtime), Time.at(rs.atime), rs.uid, rs.gid, "%o" % rs.permissions].inspect
+        begin
+          rs  = @sftp.stat!(name); s_rs = [Time.at(rs.mtime), Time.at(rs.atime), rs.uid, rs.gid, "%o" % rs.permissions].inspect
+        rescue Net::SFTP::StatusException => detail
+          return if detail.code == 2 # silently ignore the broken remote link
+        end
         debug "Remote stat for #{name} => #{s_rs}"
 
         # remote type filter: we only work with types 1..2 (regular, dir)
@@ -149,11 +155,27 @@ module Girror
             mkdir lname
             set_attrs = true
           end
-          # recurse into the dir
-          @sftp.dir.foreach name do |e|
-            n = File.join name, e.name
-            dl_if_needed n unless e.name =~ /^\.((\.{0,1})|(git)(ignore)?)$/
+          # recurse into the dir; get the remote list
+          rlist = @sftp.dir.entries(name).map do |e| 
+            unless e.name =~ /^\.((\.{0,1})|(git)(ignore)?)$/
+              dl_if_needed(File.join(name, e.name))
+              Iconv.conv("utf-8", @renc, e.name)
+            end
+          end . compact
+          
+          # get the local list
+          llist = Dir.entries(lname).map do |n|
+            Iconv.conv("utf-8", @lenc, n) unless n =~ /^\.((\.{0,1})|(git)(ignore)?)$/
+          end . compact
+          
+          # differentiate the lists; remove what's needed from local repo
+          diff = llist - rlist
+          diff.each do |n|
+            n = File.join(lname, n)
+            log "Removing #{n}"
+            @git.remove n, :recursive => true
           end
+          
         end
         
         # do the common after-fetch tasks (chown, chmod, utime)
