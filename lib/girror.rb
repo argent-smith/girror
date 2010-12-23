@@ -27,7 +27,7 @@ require 'git'
 require 'iconv'
 
 module Girror
-  # VERSION = "0.0.0"
+  VERSION = "0.0.0"
 
   # Encapsulates the app logic.
   class Application
