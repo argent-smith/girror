@@ -208,7 +208,7 @@ module Girror
         # do the common after-fetch tasks (chown, chmod, utime)
         unless lname == "./"
           unless ENV['OS'] == "Windows_NT"     # chmod/chown issues on that platform
-            File.chown rs.uid, rs.gid, lname
+            File.chown rs.uid, rs.gid, lname if ENV['EUID'] == 0
             File.chmod rs.permissions, lname
           end
           File.utime rs.atime, rs.mtime, lname
