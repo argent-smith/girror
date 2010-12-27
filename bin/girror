@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 #
+# -*- Ruby -*-
+#
 # Author:: Pavel Argentov <argentoff@gmail.com>
 # 
 # Mirror the remote sftp site and store the changes in a local git repo.

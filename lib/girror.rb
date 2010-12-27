@@ -28,6 +28,8 @@ require 'iconv'
 
 module Girror
   VERSION = "0.0.0"
+  
+  FILTER_RE = /^((\.((\.{0,1})|((git)(ignore)?)))|(_girror))$/
 
   # Encapsulates the app logic.
   class Application
@@ -36,10 +38,6 @@ module Girror
       include FileUtils
       # Runs the app.
       def run ops
-
-        # name conversion encodings for Iconv
-        @renc = ops[:renc]
-        @lenc = ops[:lenc]
 
         # main logs go here
         @log = Logger.new STDERR
@@ -55,6 +53,30 @@ module Girror
         @git = Git.open(@lpath) # local git repo
         
         cd ops[:to]; log "Changed to #{pwd}"
+        
+        # read the config and use CLI ops to override it
+        $:.unshift(File.join(".", "_girror"))
+        begin
+          require 'config'
+          ops = Config::OPTIONS.merge ops
+          
+          begin 
+            debug "Program options:"
+            ops.each do |pair|
+              debug pair.inspect
+            end
+          end
+          
+        rescue LoadError => d
+          log "Not using stored config: #{d.message}"
+        end
+                
+        # set commit message for git
+        @commit_msg = ops[:commit_msg]
+        
+        # name conversion encodings for Iconv
+        @renc = ops[:renc]
+        @lenc = ops[:lenc]
 
         # Check the validity of a remote url and run the remote connection
         if ops[:from] =~ /^((\w+)(:(\w+))?@)?(.+):(.*)$/
@@ -76,9 +98,14 @@ module Girror
             begin
               log "Committing changes to local git repo"
               @git.add
-              @git.commit Time.now.to_s, :add_all => true
+              @git.commit @commit_msg, :add_all => true
             rescue Git::GitExecuteError => detail
-              log detail.message.gsub(/\n/,' ')
+              case detail.message
+              when /nothing to commit/
+                log "Nothing to commit"
+              else
+                log detail.message
+              end
             end
             
           end
@@ -157,7 +184,7 @@ module Girror
           end
           # recurse into the dir; get the remote list
           rlist = @sftp.dir.entries(name).map do |e| 
-            unless e.name =~ /^\.((\.{0,1})|(git)(ignore)?)$/
+            unless e.name =~ FILTER_RE
               dl_if_needed(File.join(name, e.name))
               Iconv.conv("utf-8", @renc, e.name)
             end
@@ -165,7 +192,7 @@ module Girror
           
           # get the local list
           llist = Dir.entries(lname).map do |n|
-            Iconv.conv("utf-8", @lenc, n) unless n =~ /^\.((\.{0,1})|(git)(ignore)?)$/
+            Iconv.conv("utf-8", @lenc, n) unless n =~ FILTER_RE
           end . compact
           
           # differentiate the lists; remove what's needed from local repo
