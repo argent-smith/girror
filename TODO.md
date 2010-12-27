@@ -7,6 +7,7 @@ TODO:
  + Custom log files
  + syslog
  + better log directory entries 'get'
+ + log mode change
 + Documentation
 + Multithreaded download
 + Traffic shaping
