@@ -51,9 +51,9 @@ module Girror
         when nil
           Logger.new STDERR
         else
-          Logger.new ops:[:log]
-          @log.datetime_format = "%Y-%m-%d %H:%M:%S "
+          Logger.new ops[:log]
         end
+        @log.datetime_format = "%Y-%m-%d %H:%M:%S " if Logger.class == Logger
         log "Starting"
         @debug = true if ops[:verbose]
         debug "Current options are: #{ops.inspect}"
@@ -109,7 +109,10 @@ module Girror
             begin
               log "Committing changes to local git repo"
               @git.add
-              @git.commit @commit_msg, :add_all => true
+              @git.commit case @commit_msg.class
+              when String then @commit_msg
+              when Proc then @commit_msg.call
+              end, :add_all => true
             rescue Git::GitExecuteError => detail
               case detail.message
               when /nothing to commit/
