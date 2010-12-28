@@ -52,8 +52,8 @@ module Girror
           Logger.new STDERR
         else
           Logger.new ops:[:log]
+          @log.datetime_format = "%Y-%m-%d %H:%M:%S "
         end
-        @log.datetime_format = "%Y-%m-%d %H:%M:%S "
         log "Starting"
         @debug = true if ops[:verbose]
         debug "Current options are: #{ops.inspect}"
@@ -83,7 +83,7 @@ module Girror
         end
                 
         # set commit message for git
-        @commit_msg = ops[:commit_msg]
+        ops[:commit_msg].nil? ? @commit_msg = Proc.new { Time.now.to_s } : @commit_msg = ops[:commit_msg]
         
         # name conversion encodings for Iconv
         ops[:renc].nil? ? @renc = "utf-8" :  @renc = ops[:renc]
