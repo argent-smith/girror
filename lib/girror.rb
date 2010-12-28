@@ -86,8 +86,8 @@ module Girror
         @commit_msg = ops[:commit_msg]
         
         # name conversion encodings for Iconv
-        @renc = ops[:renc]
-        @lenc = ops[:lenc]
+        ops[:renc].nil? ? @renc = "utf-8" :  @renc = ops[:renc]
+        ops[:lenc].nil? ? @lenc = "utf-8" :  @lenc = ops[:lenc]
 
         # Check the validity of a remote url and run the remote connection
         if ops[:from] =~ /^((\w+)(:(\w+))?@)?(.+):(.*)$/
@@ -223,7 +223,7 @@ module Girror
               log "Setting owner: #{lname} => #{[rs.uid, rs.gid].inspect}"
               File.chown rs.uid, rs.gid, lname 
             end
-            log "Setting mode: #{lname} => #{rs.permission}"
+            log "Setting mode: #{lname} => #{"%o" % rs.permissions}"
             File.chmod rs.permissions, lname
           end
           log "Setting mtime: #{lname} => #{[rs.atime, rs.mtime].map{|t| Time.at(t).strftime("%Y-%m-%d %H:%M:%S")}.inspect}"
