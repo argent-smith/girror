@@ -170,7 +170,7 @@ module Girror
         case rs.type
         when 1
           if (lrs.nil? or (lrs.mtime.to_i < rs.mtime))
-            log "Downloading #{name} -> #{lname.force_encoding("BINARY")}"
+            log "Fetching file #{name} -> #{lname.force_encoding("BINARY")} (#{rs.size} bytes)"
             @sftp.download! name, lname
             set_attrs = true
           end
@@ -178,7 +178,7 @@ module Girror
           # here we've got a dir
           # create the dir locally if needed
           unless File.exist?(lname)
-            log "Getting #{name} -> #{lname.force_encoding("BINARY")} | #{s_rs}"
+            log "Fetching directory #{name} -> #{lname.force_encoding("BINARY")} | #{s_rs}"
             mkdir lname
             set_attrs = true
           end
@@ -208,9 +208,14 @@ module Girror
         # do the common after-fetch tasks (chown, chmod, utime)
         unless lname == "./"
           unless ENV['OS'] == "Windows_NT"     # chmod/chown issues on that platform
-            File.chown rs.uid, rs.gid, lname if ENV['EUID'] == 0
+            if ENV['EUID'] == 0
+              log "Setting owner: #{lname} => #{[rs.uid, rs.gid].inspect}"
+              File.chown rs.uid, rs.gid, lname 
+            end
+            log "Setting mode: #{lname} => #{rs.permission}"
             File.chmod rs.permissions, lname
           end
+          log "Setting mtime: #{lname} => #{[rs.atime, rs.mtime].map{|t| Time.at(t).strftime("%Y-%m-%d %H:%M:%S")}.inspect}"
           File.utime rs.atime, rs.mtime, lname
         end if set_attrs
       end
