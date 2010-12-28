@@ -32,16 +32,20 @@ HELP
 options = {}
 opts = OptionParser.new do |opts|
   opts.banner = help
+  
+  opts.on("-l log", "['syslog' or a filename]: Logging destination (default is STDERR)") do |log|
+    options[:log] = log
+  end
 
-  opts.on("--renc encoding", "Remote filename encoding.") do |enc|
+  opts.on("--renc encoding", "Remote filename encoding") do |enc|
     options[:renc] = enc
   end
 
-  opts.on("--lenc encoding", "Local filename encoding.") do |enc|
+  opts.on("--lenc encoding", "Local filename encoding") do |enc|
     options[:lenc] = enc
   end
 
-  opts.on("-o path", "Output directory, should be a git repo workdir.") do |path|
+  opts.on("-o path", "Output directory, should be a git repo workdir") do |path|
     options[:to] = path
   end
 

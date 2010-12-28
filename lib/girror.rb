@@ -39,12 +39,23 @@ module Girror
       # Runs the app.
       def run ops
 
-        # main logs go here
-        @log = Logger.new STDERR
+        # Logging setup
+        @log = case ops[:log]
+        when 'syslog'
+          unless ENV['OS'] == 'Windows_NT'
+            require 'syslog_logger'
+            SyslogLogger.new('girror')
+          else
+            Logger.new STDERR
+          end
+        when nil
+          Logger.new STDERR
+        else
+          Logger.new ops:[:log]
+        end
+        @log.datetime_format = "%Y-%m-%d %H:%M:%S "
         log "Starting"
-
-        # debug logs go here
-        @debug = Logger.new STDERR if ops[:verbose]
+        @debug = true if ops[:verbose]
         debug "Current options are: #{ops.inspect}"
 
         # check the validity of a local directory
@@ -119,7 +130,7 @@ module Girror
 
       # Does STDERR.puts of a given string if debugging mode is set.
       def debug string
-        @debug.debug string if @debug
+        @log.debug string if @debug
       end
 
       def log string

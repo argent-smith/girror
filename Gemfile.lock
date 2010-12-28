@@ -13,6 +13,7 @@ GEM
     rake (0.8.7)
     rcov (0.9.9)
     shoulda (2.11.3)
+    syslog-logger (1.6.4)
 
 PLATFORMS
   ruby
@@ -26,3 +27,4 @@ DEPENDENCIES
   net-sftp
   rcov
   shoulda
+  syslog-logger

@@ -26,6 +26,7 @@ Jeweler::Tasks.new do |gem|
   gem.add_runtime_dependency 'net-sftp'
   gem.add_runtime_dependency 'git'
   gem.add_runtime_dependency 'highline'
+  gem.add_runtime_dependency 'syslog-logger'
 end
 Jeweler::RubygemsDotOrgTasks.new
 

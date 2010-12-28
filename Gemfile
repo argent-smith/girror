@@ -15,3 +15,4 @@ end
 gem "net-sftp"
 gem "git"
 gem "highline"
+gem "syslog-logger"
