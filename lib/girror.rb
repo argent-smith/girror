@@ -171,10 +171,17 @@ module Girror
             remove_entry_secure lname, :force => true
           else
             lrs = File.stat(lname)
-            # we do mode/owner comparison on Unices only!
+            # we do mode comparison on Unices only,
+	    # and owner compaison only if we are root
             unless ENV['OS'] == "Windows_NT"
               set_attrs = true unless (
-                [lrs.mode, lrs.uid, lrs.gid] == [rs.permissions, rs.uid, rs.gid]
+		if ENV['EUID'] == 0
+	          debug "Comparing: #{[rs.permissions, rs.uid, rs.gid].inspect} <=> #{[lrs.mode, lrs.uid, lrs.gid].inspect}"
+		  [lrs.mode, lrs.uid, lrs.gid] == [rs.permissions, rs.uid, rs.gid]
+		else
+	          debug "Comparing: #{rs.permissions} <=> #{lrs.mode}"
+		  lrs.mode == rs.permissions
+		end
               )
             end
           end
