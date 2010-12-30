@@ -109,9 +109,9 @@ module Girror
             begin
               log "Committing changes to local git repo"
               @git.add
-	      msg = if @commit_msg.class == Proc then @commit_msg.call
-		    else @commit_msg
-		    end . to_s
+              msg = if @commit_msg.class == Proc then @commit_msg.call
+              else @commit_msg
+              end . to_s
               @git.commit msg, :add_all => true
             rescue Git::GitExecuteError => detail
               case detail.message
@@ -131,11 +131,12 @@ module Girror
         log "Finishing"
       end
 
-      # Does STDERR.puts of a given string if debugging mode is set.
+      # Logs a debug message
       def debug string
         @log.debug string if @debug
       end
 
+      # Writes log message to the aooropriate place
       def log string
         @log.info string
       end
@@ -172,16 +173,16 @@ module Girror
           else
             lrs = File.stat(lname)
             # we do mode comparison on Unices only,
-	    # and owner compaison only if we are root
+            # and owner compaison only if we are root
             unless ENV['OS'] == "Windows_NT"
               set_attrs = true unless (
-		if ENV['EUID'] == 0
-	          debug "Comparing: #{[rs.permissions, rs.uid, rs.gid].inspect} <=> #{[lrs.mode, lrs.uid, lrs.gid].inspect}"
-		  [lrs.mode, lrs.uid, lrs.gid] == [rs.permissions, rs.uid, rs.gid]
-		else
-	          debug "Comparing: #{rs.permissions} <=> #{lrs.mode}"
-		  lrs.mode == rs.permissions
-		end
+                if ENV['EUID'] == 0
+                  debug "Comparing: #{[rs.permissions, rs.uid, rs.gid].inspect} <=> #{[lrs.mode, lrs.uid, lrs.gid].inspect}"
+                  [lrs.mode, lrs.uid, lrs.gid] == [rs.permissions, rs.uid, rs.gid]
+                else
+                  debug "Comparing: #{rs.permissions} <=> #{lrs.mode}"
+                  lrs.mode == rs.permissions
+                end
               )
             end
           end
