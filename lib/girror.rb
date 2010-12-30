@@ -109,10 +109,10 @@ module Girror
             begin
               log "Committing changes to local git repo"
               @git.add
-              @git.commit case @commit_msg.class
-              when String then @commit_msg
-              when Proc then @commit_msg.call
-              end, :add_all => true
+	      msg = if @commit_msg.class == Proc then @commit_msg.call
+		    else @commit_msg
+		    end . to_s
+              @git.commit msg, :add_all => true
             rescue Git::GitExecuteError => detail
               case detail.message
               when /nothing to commit/
