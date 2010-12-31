@@ -27,7 +27,7 @@ besides the ssh/sftp.
 == CLI reference
 
 === girror -h
-Girror cli tool, version #{VERSION}.
+Girror cli tool, version 0.0.1.
 
 Mirrors the remote sftp site and stores the changes in a local git repo.
 
