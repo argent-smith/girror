@@ -1,7 +1,18 @@
-# Author:: Pavel Argentov <argentoff@gmail.com>
+# Author::    Pavel Argentov <argentoff@gmail.com>
+# Copyright:: (c) 2010-2011 Pavel Argentov
+# License::   see LICENSE.txt
 #
-# Girror library code.
-#
+# Girror library code, the internals. Since the whole app is a CLI utility, 
+# there's not a lot to document here.
+# 
+# The library now contains only one module Girror which contains class Application
+# which is the app logic container. The methods have some documentation in the corresponding
+# section (Girror::Application).
+# 
+# == Disclaimer
+# 
+# This documentation is written as an aid to further development of the program.
+# For more user-friendly documentation see README.rdoc file.
 #
 
 ######## Utility
@@ -13,32 +24,38 @@ $:.unshift File.dirname(__FILE__) # For use/testing when no gem is installed
 # path - The String relative path from here to the directory.
 #
 # Returns nothing.
-def require_all(path)
+def require_all(path) # :nodoc:
   glob = File.join(File.dirname(__FILE__), path, '*.rb')
   Dir[glob].each do |f|
     require f
   end
 end
 
-##### Requires:
+######## Requires
+require 'singleton'
 require 'net/sftp'
 require 'fileutils'
 require 'git'
 require 'iconv'
 
+# This module encapsulates *girror*'s namespace.
 module Girror
+  # Version of the library.
   VERSION = "0.0.0"
   
+  # Regexp to filter out 'technical' files which aren't normally a part of
+  # the mirrored tree and therefore should be _ignored_.
   FILTER_RE = /^((\.((\.{0,1})|((git)(ignore)?)))|(_girror))$/
 
-  # Encapsulates the app logic.
+  # Application logic container.
   class Application
+    include Singleton
 
     class << self # class things
       include FileUtils
-      # Runs the app.
+      
+      # Runs the app. Much like the C's main().
       def run ops
-
         # Logging setup
         @log = case ops[:log]
         when 'syslog'
@@ -131,17 +148,19 @@ module Girror
         log "Finishing"
       end
 
-      # Logs a debug message
+      # Writes a debug message to @log.
       def debug string
         @log.debug string if @debug
       end
 
-      # Writes log message to the aooropriate place
+      # Writes a log message to @log.
       def log string
         @log.info string
       end
 
-      # On-demand fetcher
+      # On-demand fetcher. Recursively fetches a directory entry 'name' (String) 
+      # if there's no local copy of it or the remote mtime is newer or the 
+      # attributes are to be updated.
       def dl_if_needed name
         debug "RNA: #{name}"
         lname = econv(File.join '.', name.gsub(/^#{@path}/,'')); debug "LNA: #{lname}"
@@ -242,7 +261,10 @@ module Girror
         end if set_attrs
       end
 
-      # Converts the string if both @renc and @lenc is set and are not equal.
+      # Converts the String str from @renc to @lenc if both @renc and @lenc are 
+      # set and aren't equal.
+      # 
+      # Returns the converted String.
       def econv str
         ((@lenc == @renc) or (@lenc.nil? or @renc.nil?)) ?
           str : Iconv.conv(@lenc, @renc, str)
