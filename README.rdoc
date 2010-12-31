@@ -1,22 +1,31 @@
 = girror
 
-girror == [G]it the M[irror]
+Girror == [G]it the M[irror]
 
-A tool which I couldn't google up, so decided to make it myself.
+A CLI remote-to-local directory mirroring tool, the poor man's "filezilla" which 
+I couldn't google up, so decided to make it myself.
 
-What should it do once complete?
+What does it do?
 
-1. Log into the remote sftp server;
-2. Get the directory tree from there;
-3. Compare the tree to the local one;
-4. Download all the newer files;
-5. Remove all the removed-on-remote files;
-6. Wrap all the operations into git transactions (creation/deletion 
-   of files/dirs)
-7. Git commit
+- Logs into the remote sftp server;
+- Changes to the dir indicated in the CLI parameter;
+- Gets the directory tree from there;
+- Compares the tree to the local one;
+- Downloads all the files/directories which are:
+  - don't exist in the local tree,
+  - newer than local ones (mtime comparison),
+  - have the mode/owner changed (this feature is available only if the local 
+    system is Unix);
+- Removes all the removed-on-remote files;
+- Wraps all the operations into git transactions (creation/deletion 
+  of files/dirs);
+- Commits the changes to the local git repository.
 
-The gotcha is that I don't have any special server software on the remote side
+Girror doesn't need any special server software on the remote side
 besides the ssh/sftp.
+
+== CLI reference
+
 
 == Contributing to girror
  
