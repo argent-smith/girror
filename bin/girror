@@ -33,31 +33,31 @@ options = {}
 opts = OptionParser.new do |opts|
   opts.banner = help
   
-  opts.on("-l log", "['syslog' or a filename]: Logging destination (default is STDERR)") do |log|
+  opts.on("-l place", "--log=place", "place = ['syslog' or a filename]: Logging destination (default is STDERR)") do |log|
     options[:log] = log
   end
 
-  opts.on("--renc encoding", "Remote filename encoding") do |enc|
+  opts.on("--renc=encoding", "Remote filename encoding") do |enc|
     options[:renc] = enc
   end
 
-  opts.on("--lenc encoding", "Local filename encoding") do |enc|
+  opts.on("--lenc=encoding", "Local filename encoding") do |enc|
     options[:lenc] = enc
   end
 
-  opts.on("-o path", "Output directory, should be a git repo workdir") do |path|
+  opts.on("-o path", "--output=path", "Output directory, should be a git repo workdir") do |path|
     options[:to] = path
   end
 
-  opts.on("-dr", "Dry run: only logs what's to be done") do |addr|
-    options[:dr] = true
-  end
+# opts.on("--dr", "Dry run: only logs what's to be done") do |addr|
+#   options[:dr] = true
+# end
 
-  opts.on("-v", "Be verbose: display a lot of debugging stuff on stderr") do |addr|
+  opts.on("-v", "--verbose", "Be verbose: display tons of debugging. THOUSANDS OF THEM!") do |addr|
     options[:verbose] = true
   end
 
-  opts.on("-h", "Display help") do
+  opts.on("-h", "--help", "Display help") do
     puts opts.help
     exit 1
   end
