@@ -26,6 +26,85 @@ besides the ssh/sftp.
 
 == CLI reference
 
+=== girror -h
+Girror cli tool, version #{VERSION}.
+
+Mirrors the remote sftp site and stores the changes in a local git repo.
+
+Command Line Usage:
+
+  girror [options] remote_uri
+
+  remote_uri: a complete sftp uri of a remote location;
+
+  remote_uri may be in the form of either "user:pass@host:path" or
+  "host:path". In the latter case username is taken from the environment
+  variable $USERNAME.
+
+  Options:
+    -l, --log place                  place = ['syslog' or a filename]: Logging destination (default is STDERR).
+        --renc encoding              Remote filename encoding; defaults to 'utf-8'.
+        --lenc encoding              Local filename encoding; defaults to 'utf-8'.
+    -o, --output path                Output directory, should be a git repo workdir.
+    -v, --verbose                    Be verbose: log tons of debugging. THOUSANDS OF THEM!
+    -h, --help                       Display this help message.
+
+== Configuration file
+
+Some runtime options may be specified in _girror/config.rb file in local "mirror" directory.
+Here's the example with the tested options:
+
+=== _girror/config.rb
+ # 
+ # girror config for current mirror
+ #
+ module Config
+
+   # Program options for the current instance
+   OPTIONS = {
+     # custom commit message
+     :commit_msg => Proc.new {"State at #{Time.now}"},
+  
+     # local filename encoding
+     :lenc => 'cp1251',
+    
+     # remote filename encoding
+     :renc => 'koi8-r'
+   }
+
+ end
+
+== Usage example
+
+ [paul@paul site]$ git init mirror
+ Initialized empty Git repository in /usr/home/paul/work/Krotov/site/mirror/.git/
+ [paul@paul site]$ girror -o mirror paul@paul:/home/paul/develop/ruby/girror
+ I, [2010-12-31T13:43:35.843256 #2341]  INFO -- : Starting
+ I, [2010-12-31T13:43:35.843515 #2341]  INFO -- : Opening local git repo at mirror
+ I, [2010-12-31T13:43:35.843848 #2341]  INFO -- : Changed to /usr/home/paul/work/Krotov/site/mirror
+ I, [2010-12-31T13:43:35.860511 #2341]  INFO -- : Not using stored config: no such file to load -- config
+ Enter passphrase for /home/paul/.ssh/id_dsa:
+ I, [2010-12-31T13:43:40.856664 #2341]  INFO -- : Connected to remote paul as paul
+ I, [2010-12-31T13:43:40.863612 #2341]  INFO -- : Fetching file /home/paul/develop/ruby/girror/Rakefile -> ./Rakefile (1565 bytes)
+ I, [2010-12-31T13:43:40.866610 #2341]  INFO -- : Setting mode: ./Rakefile => 100644
+ I, [2010-12-31T13:43:40.866853 #2341]  INFO -- : Setting mtime: ./Rakefile => ["2010-12-31 13:39:07", "2010-12-31 13:28:11"]
+ I, [2010-12-31T13:43:40.882452 #2341]  INFO -- : Fetching file /home/paul/develop/ruby/girror/Gemfile -> ./Gemfile (423 bytes)
+ I, [2010-12-31T13:43:40.885195 #2341]  INFO -- : Setting mode: ./Gemfile => 100644
+ I, [2010-12-31T13:43:40.885317 #2341]  INFO -- : Setting mtime: ./Gemfile => ["2010-12-31 13:39:08", "2010-12-28 16:26:55"]
+
+ ...
+
+ I, [2010-12-31T13:43:40.974504 #2341]  INFO -- : Fetching directory /home/paul/develop/ruby/girror/pkg -> ./pkg | [2010-12-31 13:39:07 +0300, 2010-12-31 13:39:08 +0300, 0, 0, "40755"]
+ I, [2010-12-31T13:43:40.980814 #2341]  INFO -- : Fetching file /home/paul/develop/ruby/girror/pkg/girror-0.0.0.gem -> ./pkg/girror-0.0.0.gem (61440 bytes)
+ I, [2010-12-31T13:43:40.995837 #2341]  INFO -- : Setting mode: ./pkg/girror-0.0.0.gem => 100644
+ I, [2010-12-31T13:43:40.996319 #2341]  INFO -- : Setting mtime: ./pkg/girror-0.0.0.gem => ["2010-12-31 13:39:10", "2010-12-31 13:39:07"]
+ I, [2010-12-31T13:43:40.996829 #2341]  INFO -- : Setting mode: ./pkg => 40755
+ I, [2010-12-31T13:43:40.997039 #2341]  INFO -- : Setting mtime: ./pkg => ["2010-12-31 13:39:08", "2010-12-31 13:39:07"]
+ I, [2010-12-31T13:43:40.997403 #2341]  INFO -- : Disconnected from remote paul
+ I, [2010-12-31T13:43:40.997466 #2341]  INFO -- : Committing changes to local git repo
+ I, [2010-12-31T13:43:41.061205 #2341]  INFO -- : Finishing
+
+Note that remote git-related files aren't got.
 
 == Contributing to girror
  

@@ -1,4 +1,4 @@
-# -*- Ruby -*-
+# 
 # girror config for current mirror
 #
 module Config
@@ -6,7 +6,7 @@ module Config
   # Program options for the current instance
   OPTIONS = {
     # custom commit message
-    :commit_msg => "#{eval '"State for #{Time.now}, comitted by Pavel Argentov <argentoff@gmail.com>"'}",
+    :commit_msg => Proc.new {"State at #{Time.now}"},
   
     # local filename encoding
     :lenc => 'cp1251',
