@@ -1,6 +1,7 @@
 GEM
   remote: http://rubygems.org/
   specs:
+    bluecloth (2.0.9)
     git (1.2.5)
     highline (1.6.1)
     jeweler (1.5.1)
@@ -14,12 +15,14 @@ GEM
     rcov (0.9.9)
     shoulda (2.11.3)
     syslog-logger (1.6.4)
+    yard (0.6.4)
 
 PLATFORMS
   ruby
   x86-mingw32
 
 DEPENDENCIES
+  bluecloth
   bundler (~> 1.0.0)
   git
   highline
@@ -28,3 +31,4 @@ DEPENDENCIES
   rcov
   shoulda
   syslog-logger
+  yard
