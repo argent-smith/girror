@@ -1,5 +1,6 @@
 MIT license
 -----------
+
 Copyright (c) 2010-2011 Pavel Argentov
 
 Permission is hereby granted, free of charge, to any person obtaining
