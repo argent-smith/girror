@@ -5,17 +5,17 @@
 
 Gem::Specification.new do |s|
   s.name = %q{girror}
-  s.version = "0.0.1"
+  s.version = "0.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Pavel Argentov"]
-  s.date = %q{2010-12-31}
+  s.date = %q{2011-01-10}
   s.default_executable = %q{girror}
   s.description = %q{Retrieves remote directory via SFTP and stores it in local Git repository.}
   s.email = %q{argentoff@gmail.com}
   s.executables = ["girror"]
   s.extra_rdoc_files = [
-    "LICENSE.txt",
+    "LICENSE.md",
     "README.rdoc"
   ]
   s.files = [
@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
     ".document",
     "Gemfile",
     "Gemfile.lock",
-    "LICENSE.txt",
+    "LICENSE.md",
     "README.rdoc",
     "Rakefile",
     "TODO.md",
@@ -32,7 +32,8 @@ Gem::Specification.new do |s|
     "examples/_girror/config.rb",
     "gem_graph.png",
     "girror.gemspec",
-    "lib/girror.rb"
+    "lib/girror.rb",
+    "profile.pdf"
   ]
   s.homepage = %q{http://github.com/argent-smith/girror}
   s.licenses = ["MIT"]
@@ -56,6 +57,10 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.5.1"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
+      s.add_development_dependency(%q<yard>, [">= 0"])
+      s.add_development_dependency(%q<bluecloth>, [">= 0"])
+      s.add_development_dependency(%q<bluecloth>, [">= 0"])
+      s.add_development_dependency(%q<yard>, [">= 0"])
       s.add_runtime_dependency(%q<net-sftp>, [">= 0"])
       s.add_runtime_dependency(%q<git>, [">= 0"])
       s.add_runtime_dependency(%q<highline>, [">= 0"])
@@ -69,6 +74,10 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.5.1"])
       s.add_dependency(%q<rcov>, [">= 0"])
+      s.add_dependency(%q<yard>, [">= 0"])
+      s.add_dependency(%q<bluecloth>, [">= 0"])
+      s.add_dependency(%q<bluecloth>, [">= 0"])
+      s.add_dependency(%q<yard>, [">= 0"])
       s.add_dependency(%q<net-sftp>, [">= 0"])
       s.add_dependency(%q<git>, [">= 0"])
       s.add_dependency(%q<highline>, [">= 0"])
@@ -83,6 +92,10 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.5.1"])
     s.add_dependency(%q<rcov>, [">= 0"])
+    s.add_dependency(%q<yard>, [">= 0"])
+    s.add_dependency(%q<bluecloth>, [">= 0"])
+    s.add_dependency(%q<bluecloth>, [">= 0"])
+    s.add_dependency(%q<yard>, [">= 0"])
     s.add_dependency(%q<net-sftp>, [">= 0"])
     s.add_dependency(%q<git>, [">= 0"])
     s.add_dependency(%q<highline>, [">= 0"])
