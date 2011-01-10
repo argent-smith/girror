@@ -114,7 +114,11 @@ module Girror
           @path = $6
 
           debug "Remote data specified as: login: #{@user}; pass: #{@pass.inspect}; host: #{@host}; path: #{@path}"
-          Net::SFTP.start(@host, @user, :password => @pass) do |s|
+          Net::SFTP.start(@host, @user, 
+			  :password => @pass,
+			  :keys => ops[:ssh][:keys],
+			  :compression => ops[:ssh][:compression]
+			 ) do |s|
             @sftp = s
             log "Connected to remote #{@host} as #{@user}"
 
