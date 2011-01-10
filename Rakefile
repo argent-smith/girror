@@ -1,4 +1,5 @@
 # encoding: utf-8
+require 'yard'
 require 'rubygems'
 require 'bundler'
 begin
@@ -24,6 +25,8 @@ Jeweler::Tasks.new do |gem|
   # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
   #  gem.add_runtime_dependency 'jabber4r', '> 0.1'
   #  gem.add_development_dependency 'rspec', '> 1.2.3'
+  gem.add_development_dependency 'bluecloth'
+  gem.add_development_dependency 'yard'
   gem.add_runtime_dependency 'net-sftp'
   gem.add_runtime_dependency 'git'
   gem.add_runtime_dependency 'highline'
@@ -41,3 +44,5 @@ Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.include('LICENSE*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
+
+YARD::Rake::YardocTask.new

@@ -1,4 +1,5 @@
-== MIT license
+MIT license
+-----------
 
 Copyright (c) 2010-2011 Pavel Argentov
 
