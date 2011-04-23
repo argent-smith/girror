@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{girror}
-  s.version = "0.0.3"
+  s.version = "0.0.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Pavel Argentov"]
-  s.date = %q{2011-01-10}
+  s.date = %q{2011-04-23}
   s.default_executable = %q{girror}
   s.description = %q{Retrieves remote directory via SFTP and stores it in local Git repository.}
   s.email = %q{argentoff@gmail.com}
@@ -38,14 +38,13 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/argent-smith/girror}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.7}
+  s.rubygems_version = %q{1.6.2}
   s.summary = %q{Remote -> local directory 'mirror' using SFTP transport and Git storage.}
   s.test_files = [
     "examples/_girror/config.rb"
   ]
 
   if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then

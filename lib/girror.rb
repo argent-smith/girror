@@ -41,7 +41,7 @@ require 'iconv'
 # This module encapsulates *girror*'s namespace.
 module Girror
   # Version of the library.
-  VERSION = "0.0.3"
+  VERSION = "0.0.4"
   
   # Regexp to filter out 'technical' files which aren't normally a part of
   # the mirrored tree and therefore should be _ignored_.
