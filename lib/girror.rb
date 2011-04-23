@@ -243,7 +243,9 @@ module Girror
           # differentiate the lists; remove what's needed from local repo
           diff = llist - rlist
           diff.each do |n|
-            n = File.join(lname, n)
+	    # the string should be converted back to local encoding before any
+	    # operations
+            n = Iconv.conv(@lenc, "utf-8", File.join(lname, n))
             log "Removing #{n}"
             @git.remove n, :recursive => true
           end
