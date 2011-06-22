@@ -1,21 +1,22 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    bluecloth (2.0.9)
+    bluecloth (2.1.0)
+    bluecloth (2.1.0-x86-mingw32)
     git (1.2.5)
-    highline (1.6.1)
-    jeweler (1.5.1)
+    highline (1.6.2)
+    jeweler (1.5.2)
       bundler (~> 1.0.0)
       git (>= 1.2.5)
       rake
     net-sftp (2.0.5)
       net-ssh (>= 2.0.9)
-    net-ssh (2.0.23)
-    rake (0.8.7)
+    net-ssh (2.1.4)
+    rake (0.9.2)
     rcov (0.9.9)
     shoulda (2.11.3)
     syslog-logger (1.6.4)
-    yard (0.6.4)
+    yard (0.7.2)
 
 PLATFORMS
   ruby
