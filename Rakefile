@@ -21,16 +21,7 @@ Jeweler::Tasks.new do |gem|
   gem.description = %Q{Retrieves remote directory via SFTP and stores it in local Git repository.}
   gem.email = "argentoff@gmail.com"
   gem.authors = ["Pavel Argentov"]
-  # Include your dependencies below. Runtime dependencies are required when using your gem,
-  # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
-  #  gem.add_runtime_dependency 'jabber4r', '> 0.1'
-  #  gem.add_development_dependency 'rspec', '> 1.2.3'
-  gem.add_development_dependency 'bluecloth'
-  gem.add_development_dependency 'yard'
-  gem.add_runtime_dependency 'net-sftp'
-  gem.add_runtime_dependency 'git'
-  gem.add_runtime_dependency 'highline'
-  gem.add_runtime_dependency 'syslog-logger'
+  # Dependencies are held in bundler's Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
 

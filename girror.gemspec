@@ -39,9 +39,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.7.2}
   s.summary = %q{Remote -> local directory 'mirror' using SFTP transport and Git storage.}
-  s.test_files = [
-    "examples/_girror/config.rb"
-  ]
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
@@ -51,56 +48,32 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<git>, [">= 0"])
       s.add_runtime_dependency(%q<highline>, [">= 0"])
       s.add_runtime_dependency(%q<syslog-logger>, [">= 0"])
-      s.add_development_dependency(%q<shoulda>, [">= 0"])
-      s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
-      s.add_development_dependency(%q<jeweler>, ["~> 1.5.1"])
-      s.add_development_dependency(%q<rcov>, [">= 0"])
+      s.add_development_dependency(%q<bundler>, [">= 0"])
+      s.add_development_dependency(%q<jeweler>, [">= 0"])
       s.add_development_dependency(%q<yard>, [">= 0"])
       s.add_development_dependency(%q<bluecloth>, [">= 0"])
       s.add_development_dependency(%q<rdoc>, [">= 0"])
-      s.add_development_dependency(%q<bluecloth>, [">= 0"])
-      s.add_development_dependency(%q<yard>, [">= 0"])
-      s.add_runtime_dependency(%q<net-sftp>, [">= 0"])
-      s.add_runtime_dependency(%q<git>, [">= 0"])
-      s.add_runtime_dependency(%q<highline>, [">= 0"])
-      s.add_runtime_dependency(%q<syslog-logger>, [">= 0"])
     else
       s.add_dependency(%q<net-sftp>, [">= 0"])
       s.add_dependency(%q<git>, [">= 0"])
       s.add_dependency(%q<highline>, [">= 0"])
       s.add_dependency(%q<syslog-logger>, [">= 0"])
-      s.add_dependency(%q<shoulda>, [">= 0"])
-      s.add_dependency(%q<bundler>, ["~> 1.0.0"])
-      s.add_dependency(%q<jeweler>, ["~> 1.5.1"])
-      s.add_dependency(%q<rcov>, [">= 0"])
+      s.add_dependency(%q<bundler>, [">= 0"])
+      s.add_dependency(%q<jeweler>, [">= 0"])
       s.add_dependency(%q<yard>, [">= 0"])
       s.add_dependency(%q<bluecloth>, [">= 0"])
       s.add_dependency(%q<rdoc>, [">= 0"])
-      s.add_dependency(%q<bluecloth>, [">= 0"])
-      s.add_dependency(%q<yard>, [">= 0"])
-      s.add_dependency(%q<net-sftp>, [">= 0"])
-      s.add_dependency(%q<git>, [">= 0"])
-      s.add_dependency(%q<highline>, [">= 0"])
-      s.add_dependency(%q<syslog-logger>, [">= 0"])
     end
   else
     s.add_dependency(%q<net-sftp>, [">= 0"])
     s.add_dependency(%q<git>, [">= 0"])
     s.add_dependency(%q<highline>, [">= 0"])
     s.add_dependency(%q<syslog-logger>, [">= 0"])
-    s.add_dependency(%q<shoulda>, [">= 0"])
-    s.add_dependency(%q<bundler>, ["~> 1.0.0"])
-    s.add_dependency(%q<jeweler>, ["~> 1.5.1"])
-    s.add_dependency(%q<rcov>, [">= 0"])
+    s.add_dependency(%q<bundler>, [">= 0"])
+    s.add_dependency(%q<jeweler>, [">= 0"])
     s.add_dependency(%q<yard>, [">= 0"])
     s.add_dependency(%q<bluecloth>, [">= 0"])
     s.add_dependency(%q<rdoc>, [">= 0"])
-    s.add_dependency(%q<bluecloth>, [">= 0"])
-    s.add_dependency(%q<yard>, [">= 0"])
-    s.add_dependency(%q<net-sftp>, [">= 0"])
-    s.add_dependency(%q<git>, [">= 0"])
-    s.add_dependency(%q<highline>, [">= 0"])
-    s.add_dependency(%q<syslog-logger>, [">= 0"])
   end
 end
 

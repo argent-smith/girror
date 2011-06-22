@@ -5,17 +5,15 @@ GEM
     bluecloth (2.1.0-x86-mingw32)
     git (1.2.5)
     highline (1.6.2)
-    jeweler (1.5.2)
-      bundler (~> 1.0.0)
+    jeweler (1.6.2)
+      bundler (~> 1.0)
       git (>= 1.2.5)
       rake
     net-sftp (2.0.5)
       net-ssh (>= 2.0.9)
     net-ssh (2.1.4)
     rake (0.9.2)
-    rcov (0.9.9)
     rdoc (3.6.1)
-    shoulda (2.11.3)
     syslog-logger (1.6.4)
     yard (0.7.2)
 
@@ -25,13 +23,11 @@ PLATFORMS
 
 DEPENDENCIES
   bluecloth
-  bundler (~> 1.0.0)
+  bundler
   git
   highline
-  jeweler (~> 1.5.1)
+  jeweler
   net-sftp
-  rcov
   rdoc
-  shoulda
   syslog-logger
   yard
