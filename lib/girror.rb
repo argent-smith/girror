@@ -2,15 +2,15 @@
 # Copyright:: (c) 2010-2011 Pavel Argentov
 # License::   see LICENSE.txt
 #
-# Girror library code, the internals. Since the whole app is a CLI utility, 
+# Girror library code, the internals. Since the whole app is a CLI utility,
 # there's not a lot to document here.
-# 
+#
 # The library now contains only one module Girror which contains class Application
 # which is the app logic container. The methods have some documentation in the corresponding
 # section (Girror::Application).
-# 
+#
 # == Disclaimer
-# 
+#
 # This documentation is written as an aid to further development of the program.
 # For more user-friendly documentation see README.rdoc file.
 #
@@ -42,7 +42,7 @@ require 'iconv'
 module Girror
   # Version of the library.
   VERSION = "0.0.4"
-  
+
   # Regexp to filter out 'technical' files which aren't normally a part of
   # the mirrored tree and therefore should be _ignored_.
   FILTER_RE = /^((\.((\.{0,1})|((git)(ignore)?)))|(_girror))$/
@@ -53,7 +53,7 @@ module Girror
 
     class << self # class things
       include FileUtils
-      
+
       # Runs the app. Much like the C's main().
       def run ops
         # Logging setup
@@ -79,29 +79,29 @@ module Girror
         @lpath = ops[:to]       # local save path
         log "Opening local git repo at #{@lpath}"
         @git = Git.open(@lpath) # local git repo
-        
+
         cd ops[:to]; log "Changed to #{pwd}"
-        
+
         # read the config and use CLI ops to override it
         $:.unshift(File.join(".", "_girror"))
         begin
           require 'config'
           ops = Config::OPTIONS.merge ops
-          
-          begin 
+
+          begin
             debug "Program options:"
             ops.each do |pair|
               debug pair.inspect
             end
           end
-          
+
         rescue LoadError => d
           log "Not using stored config: #{d.message}"
         end
-                
+
         # set commit message for git
         ops[:commit_msg].nil? ? @commit_msg = Proc.new { Time.now.to_s } : @commit_msg = ops[:commit_msg]
-        
+
         # name conversion encodings for Iconv
         ops[:renc].nil? ? @renc = "utf-8" :  @renc = ops[:renc]
         ops[:lenc].nil? ? @lenc = "utf-8" :  @lenc = ops[:lenc]
@@ -114,7 +114,7 @@ module Girror
           @path = $6
 
           debug "Remote data specified as: login: #{@user}; pass: #{@pass.inspect}; host: #{@host}; path: #{@path}"
-          Net::SFTP.start(@host, @user, 
+          Net::SFTP.start(@host, @user,
 			  :password => @pass,
 			  :keys => ops[:ssh][:keys],
 			  :compression => ops[:ssh][:compression]
@@ -125,7 +125,7 @@ module Girror
             dl_if_needed @path
 
             log "Disconnected from remote #{@host}"
-            
+
             # fix the local tree in the git repo
             begin
               log "Committing changes to local git repo"
@@ -142,9 +142,9 @@ module Girror
                 log detail.message
               end
             end
-            
+
           end
-     
+
         else
           raise "Bad remote specification!"
         end
@@ -162,8 +162,8 @@ module Girror
         @log.info string
       end
 
-      # On-demand fetcher. Recursively fetches a directory entry 'name' (String) 
-      # if there's no local copy of it or the remote mtime is newer or the 
+      # On-demand fetcher. Recursively fetches a directory entry 'name' (String)
+      # if there's no local copy of it or the remote mtime is newer or the
       # attributes are to be updated.
       def dl_if_needed name
         debug "RNA: #{name}"
@@ -228,18 +228,18 @@ module Girror
             set_attrs = true
           end
           # recurse into the dir; get the remote list
-          rlist = @sftp.dir.entries(name).map do |e| 
+          rlist = @sftp.dir.entries(name).map do |e|
             unless e.name =~ FILTER_RE
               dl_if_needed(File.join(name, e.name))
               Iconv.conv("utf-8", @renc, e.name)
             end
           end . compact
-          
+
           # get the local list
           llist = Dir.entries(lname).map do |n|
             Iconv.conv("utf-8", @lenc, n) unless n =~ FILTER_RE
           end . compact
-          
+
           # differentiate the lists; remove what's needed from local repo
           diff = llist - rlist
           diff.each do |n|
@@ -247,17 +247,26 @@ module Girror
 	    # operations
             n = Iconv.conv(@lenc, "utf-8", File.join(lname, n))
             log "Removing #{n}"
-            @git.remove n, :recursive => true
+            begin
+              @git.remove n, :recursive => true
+            rescue Git::GitExecuteError => detail
+              case detail.message
+              when /did not match/
+                log "#{n} has no match in the git repo: removing it forcefully!"
+                rm_rf n
+              else
+                log detail.message
+              end
+            end
           end
-          
         end
-        
+
         # do the common after-fetch tasks (chown, chmod, utime)
         unless lname == "./"
           unless ENV['OS'] == "Windows_NT"     # chmod/chown issues on that platform
             if ENV['EUID'] == 0
               log "Setting owner: #{lname} => #{[rs.uid, rs.gid].inspect}"
-              File.chown rs.uid, rs.gid, lname 
+              File.chown rs.uid, rs.gid, lname
             end
             log "Setting mode: #{lname} => #{"%o" % rs.permissions}"
             File.chmod rs.permissions, lname
@@ -267,9 +276,9 @@ module Girror
         end if set_attrs
       end
 
-      # Converts the String str from @renc to @lenc if both @renc and @lenc are 
+      # Converts the String str from @renc to @lenc if both @renc and @lenc are
       # set and aren't equal.
-      # 
+      #
       # Returns the converted String.
       def econv str
         ((@lenc == @renc) or (@lenc.nil? or @renc.nil?)) ?
