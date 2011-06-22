@@ -12,6 +12,7 @@ group :development do
   gem "rcov", ">= 0"
   gem "yard"
   gem "bluecloth"
+  gem "rdoc"
 end
 
 gem "net-sftp"

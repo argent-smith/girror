@@ -5,12 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{girror}
-  s.version = "0.0.4"
+  s.version = "0.0.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Pavel Argentov"]
-  s.date = %q{2011-04-23}
-  s.default_executable = %q{girror}
+  s.date = %q{2011-06-22}
   s.description = %q{Retrieves remote directory via SFTP and stores it in local Git repository.}
   s.email = %q{argentoff@gmail.com}
   s.executables = ["girror"]
@@ -38,7 +37,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/argent-smith/girror}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.6.2}
+  s.rubygems_version = %q{1.7.2}
   s.summary = %q{Remote -> local directory 'mirror' using SFTP transport and Git storage.}
   s.test_files = [
     "examples/_girror/config.rb"
@@ -58,6 +57,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<rcov>, [">= 0"])
       s.add_development_dependency(%q<yard>, [">= 0"])
       s.add_development_dependency(%q<bluecloth>, [">= 0"])
+      s.add_development_dependency(%q<rdoc>, [">= 0"])
       s.add_development_dependency(%q<bluecloth>, [">= 0"])
       s.add_development_dependency(%q<yard>, [">= 0"])
       s.add_runtime_dependency(%q<net-sftp>, [">= 0"])
@@ -75,6 +75,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rcov>, [">= 0"])
       s.add_dependency(%q<yard>, [">= 0"])
       s.add_dependency(%q<bluecloth>, [">= 0"])
+      s.add_dependency(%q<rdoc>, [">= 0"])
       s.add_dependency(%q<bluecloth>, [">= 0"])
       s.add_dependency(%q<yard>, [">= 0"])
       s.add_dependency(%q<net-sftp>, [">= 0"])
@@ -93,6 +94,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rcov>, [">= 0"])
     s.add_dependency(%q<yard>, [">= 0"])
     s.add_dependency(%q<bluecloth>, [">= 0"])
+    s.add_dependency(%q<rdoc>, [">= 0"])
     s.add_dependency(%q<bluecloth>, [">= 0"])
     s.add_dependency(%q<yard>, [">= 0"])
     s.add_dependency(%q<net-sftp>, [">= 0"])
