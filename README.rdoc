@@ -1,5 +1,7 @@
 = girror
 
+{<img src="https://codeclimate.com/badge.png" />}[https://codeclimate.com/github/argent-smith/girror]
+
 Girror == [G]it the M[irror]
 
 A CLI remote-to-local directory mirroring tool, the poor man's "filezilla" which
